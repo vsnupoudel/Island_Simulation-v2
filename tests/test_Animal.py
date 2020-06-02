@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-__author__ = 'Hans Ekkehard Plesser'
-__email__ = 'hans.ekkehard.plesser@nmbu.no'
 
 from biosim.Animal import Animals
 import pytest
 from unittest import TestCase
 
 
-def test_syntax():
-    Animals()
+class TestAnimal:
 
-def test_print_animal():
-    assert 1 == 2
+    def test_syntax(self):
+        with pytest.raises(ZeroDivisionError):
+            _ = 12 / 0
+
+    def test_print_animal(self):
+        assert 1 == 2
