@@ -1,2 +1,4 @@
 class BioSim:
-    pass
+
+    def simulate(self):
+        pass
