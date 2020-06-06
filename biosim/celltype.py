@@ -4,29 +4,99 @@ __author__ = 'bipo@nmbu.no'
 
 import numpy as np
 import pytest
+from biosim.animal import Herbivore, Carnivore
 
 
 class CellType:
-    pass
+    def __init__(self, row, col):
+        self.row = row
+        self.col = col
+        self.herb_list = []
+        self.carn_list = []
+        self.fodder = self.grow_fodder_each_year()
+
+    def grow_fodder_each_year(self):
+        return 0
+
+    def place_animals_in_list(self, list_of_diction):
+        for animal in list_of_diction:
+            if animal['species'] == "Herbivore":
+                self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
+            if animal['species'] == "Carnivore":
+                self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
+
+    def herbs_eat(self):
+        np.random.shuffle( self.herb_list )
+        for herb in self.herb_list:
+            self.fodder -= herb.eat(self.fodder)
+
+    def carns_hunt(self):
+        pass
+
+    def make_animals_eat(self):
+        self.herbs_eat()
+        self.carns_hunt()
+
+    def make_animals_reproduce(self):
+        pass
+
+    def make_animals_die(self):
+        pass
+
+    def make_animals_age(self):
+        pass
 
 
 class Water(CellType):
-    pass
+    is_migratable = False
+
+    def __init__(self, row, col):
+        super().__init__(row, col)
+        self.fodder = self.grow_fodder_each_year()
 
 
 class Desert(CellType):
-    pass
+    is_migratable = True
+
+    def __init__(self, row, col):
+        super().__init__(row, col)
+        self.fodder = self.grow_fodder_each_year()
 
 
 class Lowland(CellType):
-    pass
+    is_migratable = True
+
+    def __init__(self, row, col):
+        super().__init__(row, col)
+        self.fodder = self.grow_fodder_each_year()
+
+    def grow_fodder_each_year(self):
+        return 800  # params['fodder']
 
 
 class Highland(CellType):
-    pass
+    is_migratable = True
+
+    def __init__(self, row, col):
+        super().__init__(row, col)
+        self.fodder = self.grow_fodder_each_year()
+
+    def grow_fodder_each_year(self):
+        return 300  # params['fodder']
+
 
 if __name__ == "__main__":
-    a = {'foo': 1.00000000001, 'bar': 2}
-    b = {'foo': 1, 'bar': 2}
-    print(a == b)
-    print(a== pytest.approx(b))
+    listof = [{'species': 'Herbivore',
+               'age': 5,
+               'weight': 20}
+              for _ in range(150)]
+    l = Lowland(1, 1)
+    print(l.fodder)
+    l.place_animals_in_list(listof)
+    for herb in l.herb_list:
+        print(herb.fitness(), end=',')
+    l.make_animals_eat()
+    print("")
+    print("new fitness")
+    for herb in l.herb_list:
+        print(herb.fitness(), end=',')

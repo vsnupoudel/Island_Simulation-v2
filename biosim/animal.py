@@ -18,10 +18,13 @@ class Animal:
             self.weight = weight
 
     def get_older(self):
+        """
+        Function is called for each animal at the end of a year cycle.
+        Age is increase by 1, while weight decreases depending on the eta parameter.
+        :return: None
+        """
         self.age += 1
-
-    def weight_loss(self):
-        self.weight *= 1. - self._params['eta']
+        self.weight -= self.weight*self._params['eta']
 
     def _q(self, sgn, x, xhalf, phi):
         return 1. / (1. + math.exp(sgn * phi * (x - xhalf)))
@@ -70,17 +73,19 @@ class Animal:
             return False
 
     def gives_baby(self, count_of_species_in_cell):
-        # weight check 1
-        print('outside  check')
+        # weight check to check if mother can reproduce
         if self.weight >= self._params['zeta'] * (self._params['w_birth'] +
                                                   self._params['sigma_birth']):
-            print('inside wt check')
+
             # probability check
             if np.random.random() < min (1, self._params['gamma']  * self.fitness()*(\
                     count_of_species_in_cell- 1)) :
-                print('inside prob check')
-                newborn = self.__class__()
-                return newborn
+                new_animal = self.__class__()
+                # would mother lose more than her own weight
+                if self._params['xi'] * new_animal.weight <= self.weight:
+                    self.weight -= self._params['xi'] * new_animal.weight
+                    return new_animal
+
 
 
 class Herbivore(Animal):
