@@ -70,7 +70,17 @@ class Animal:
             return False
 
     def gives_baby(self, count_of_species_in_cell):
-        pass
+        # weight check 1
+        print('outside  check')
+        if self.weight >= self._params['zeta'] * (self._params['w_birth'] +
+                                                  self._params['sigma_birth']):
+            print('inside wt check')
+            # probability check
+            if np.random.random() < min (1, self._params['gamma']  * self.fitness()*(\
+                    count_of_species_in_cell- 1)) :
+                print('inside prob check')
+                newborn = self.__class__()
+                return newborn
 
 
 class Herbivore(Animal):
@@ -115,7 +125,14 @@ class Carnivore(Animal):
 
 
 if __name__ == "__main__":
-    h= Herbivore()
+    h = Herbivore(weight = 50)
     print(h.fitness())
-    h.eat(100)
-    print(h.fitness())
+    newborn = h.gives_baby(100)
+    print(newborn)
+    print(newborn.weight)
+    print(newborn.fitness())
+
+    newborn = h.gives_baby(100)
+    print(newborn)
+    print(newborn.weight)
+    print(newborn.fitness())
