@@ -26,7 +26,7 @@ class CellType:
                 self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
 
     def herbs_eat(self):
-        np.random.shuffle( self.herb_list )
+        np.random.shuffle(self.herb_list)
         for herb in self.herb_list:
             self.fodder -= herb.eat(self.fodder)
 
@@ -38,13 +38,24 @@ class CellType:
         self.carns_hunt()
 
     def make_animals_reproduce(self):
-        pass
+        newborn_list = []
+        len_list = len(self.herb_list)
+        for anim in self.herb_list:
+            new_born = anim.gives_baby(len_list)
+            if new_born is not None:
+                newborn_list.append(new_born)
+        self.herb_list = self.herb_list + newborn_list
 
     def make_animals_die(self):
-        pass
+        death_list = []
+        for anim in self.herb_list:
+            if anim.dies():
+                death_list.append(anim)
+        self.herb_list = set(self.herb_list) - set(death_list)
 
     def make_animals_age(self):
-        pass
+        for anim in self.herb_list:
+            anim.get_older()
 
 
 class Water(CellType):
@@ -88,15 +99,30 @@ class Highland(CellType):
 if __name__ == "__main__":
     listof = [{'species': 'Herbivore',
                'age': 5,
-               'weight': 20}
+               'weight': 25}
               for _ in range(150)]
     l = Lowland(1, 1)
     print(l.fodder)
+    # place them in list
     l.place_animals_in_list(listof)
-    for herb in l.herb_list:
-        print(herb.fitness(), end=',')
+    # for herb in l.herb_list:
+    #     print(herb.fitness(), end=',')
+    # make them eat
     l.make_animals_eat()
+    # for herb in l.herb_list:
+    #     print(herb.fitness(), end=',')
+
+    # make them reproduce
     print("")
-    print("new fitness")
-    for herb in l.herb_list:
-        print(herb.fitness(), end=',')
+    print(len(l.herb_list))
+    l.make_animals_reproduce()
+    print(len(l.herb_list))
+
+    # make them die
+    l.make_animals_die()
+    print(len(l.herb_list))
+
+    # get older and continue the cycle for next year
+    l.make_animals_age()
+    for anim in l.herb_list:
+        print(anim.age, end=',')

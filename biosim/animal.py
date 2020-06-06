@@ -26,7 +26,7 @@ class Animal:
         self.age += 1
         self.weight -= self.weight*self._params['eta']
 
-    def _q(self, sgn, x, xhalf, phi):
+    def q(self, sgn, x, xhalf, phi):
         return 1. / (1. + math.exp(sgn * phi * (x - xhalf)))
 
     def fitness(self):
@@ -39,8 +39,8 @@ class Animal:
         if self.weight <= 0:
             return 0.
         else:
-            return (self._q(+1, self.age, p['a_half'], p['phi_age']
-                            ) * self._q(-1, self.weight, p['w_half'], p['phi_weight']))
+            return (self.q(+1, self.age, p['a_half'], p['phi_age']
+                            ) * self.q(-1, self.weight, p['w_half'], p['phi_weight']))
 
     def eat(self, food_in_cell):
         """
