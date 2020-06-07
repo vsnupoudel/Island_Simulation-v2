@@ -13,10 +13,6 @@ class CellType:
         self.col = col
         self.herb_list = []
         self.carn_list = []
-        self.fodder = self.grow_fodder_each_year()
-
-    def grow_fodder_each_year(self):
-        return 0
 
     def place_animals_in_list(self, list_of_diction):
         for animal in list_of_diction:
@@ -51,7 +47,7 @@ class CellType:
         for anim in self.herb_list:
             if anim.dies():
                 death_list.append(anim)
-        self.herb_list = set(self.herb_list) - set(death_list)
+        self.herb_list = list( set(self.herb_list) - set(death_list) )
 
     def make_animals_age(self):
         for anim in self.herb_list:
@@ -63,37 +59,43 @@ class Water(CellType):
 
     def __init__(self, row, col):
         super().__init__(row, col)
-        self.fodder = self.grow_fodder_each_year()
+
 
 
 class Desert(CellType):
     is_migratable = True
+    _params = {'fodder': 0}
 
     def __init__(self, row, col):
         super().__init__(row, col)
-        self.fodder = self.grow_fodder_each_year()
+        self.fodder = self._params['fodder']
+
+    def grow_fodder_each_year(self):
+        self.fodder = self._params['fodder']
 
 
 class Lowland(CellType):
     is_migratable = True
+    _params = {'fodder':800}
 
     def __init__(self, row, col):
         super().__init__(row, col)
-        self.fodder = self.grow_fodder_each_year()
+        self.fodder = self._params['fodder']
 
     def grow_fodder_each_year(self):
-        return 800  # params['fodder']
+        self.fodder = self._params['fodder']
 
 
 class Highland(CellType):
     is_migratable = True
+    _params = {'fodder': 300}
 
     def __init__(self, row, col):
         super().__init__(row, col)
-        self.fodder = self.grow_fodder_each_year()
+        self.fodder = self._params['fodder']
 
     def grow_fodder_each_year(self):
-        return 300  # params['fodder']
+        self.fodder = self._params['fodder']
 
 
 if __name__ == "__main__":
