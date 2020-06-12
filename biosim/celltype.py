@@ -3,9 +3,7 @@
 __author__ = 'bipo@nmbu.no'
 
 import numpy as np
-import pytest
 from biosim.animal import Herbivore, Carnivore
-
 
 class CellType:
     def __init__(self, row, col):
@@ -19,7 +17,7 @@ class CellType:
             if animal['species'] == "Herbivore":
                 self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
             if animal['species'] == "Carnivore":
-                self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
+                self.carn_list.append(Carnivore(age=animal['age'], weight=animal['weight']))
 
     def herbs_eat(self):
         np.random.shuffle(self.herb_list)
@@ -27,7 +25,17 @@ class CellType:
             self.fodder -= herb.eat(self.fodder)
 
     def carns_hunt(self):
-        pass
+        self.herb_list.sort(key=lambda x: x.fitness())
+        self.carn_list.sort(key=lambda x: x.fitness(), reverse= True)
+        carns_num_eating = 0
+        for anim in self.carn_list:
+            dead_herbs = anim.hunts(self.herb_list)
+            if len(dead_herbs) >=1:
+                carns_num_eating +=1
+            self.herb_list = list ( set(self.herb_list) - set(dead_herbs))
+            self.herb_list.sort(key=lambda x: x.fitness())
+
+        # print(carns_num_eating, ' out of ', len(self.carn_list), ' ate this year')
 
     def make_animals_eat(self):
         self.herbs_eat()
@@ -42,6 +50,14 @@ class CellType:
                 newborn_list.append(new_born)
         self.herb_list = self.herb_list + newborn_list
 
+        newcarn_list = []
+        len_list = len(self.carn_list)
+        for anim in self.carn_list:
+            new_born = anim.gives_baby(len_list)
+            if new_born is not None:
+                newcarn_list.append(new_born)
+        self.carn_list = self.carn_list + newcarn_list
+
     def make_animals_die(self):
         death_list = []
         for anim in self.herb_list:
@@ -49,10 +65,17 @@ class CellType:
                 death_list.append(anim)
         self.herb_list = list( set(self.herb_list) - set(death_list) )
 
+        carn_death_list = []
+        for anim in self.carn_list:
+            if anim.dies():
+                carn_death_list.append(anim)
+        self.carn_list = list(set(self.carn_list) - set(carn_death_list))
+
     def make_animals_age(self):
         for anim in self.herb_list:
             anim.get_older()
-
+        for anim in self.carn_list:
+            anim.get_older()
 
 class Water(CellType):
     is_migratable = False
@@ -107,8 +130,6 @@ if __name__ == "__main__":
     print(l.fodder)
     # place them in list
     l.place_animals_in_list(listof)
-    # for herb in l.herb_list:
-    #     print(herb.fitness(), end=',')
     # make them eat
     l.make_animals_eat()
     # for herb in l.herb_list:

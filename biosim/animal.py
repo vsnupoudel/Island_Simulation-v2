@@ -9,9 +9,15 @@ import math
 class Animal:
     _params = {}
 
+    @classmethod
+    def set_parameters(cls, params):
+        """Set parameters for class."""
+        cls._params.update(params)
+
     def __init__(self, age=0, weight=None):
         self.age = age
         birth_weight = np.random.normal(self._params['w_birth'], self._params['sigma_birth'])
+        # print(birth_weight)
         if weight is None:
             self.weight = birth_weight
         else:
@@ -26,7 +32,8 @@ class Animal:
         self.age += 1
         self.weight -= self.weight*self._params['eta']
 
-    def q(self, sgn, x, xhalf, phi):
+    @staticmethod
+    def q( sgn, x, xhalf, phi):
         return 1. / (1. + math.exp(sgn * phi * (x - xhalf)))
 
     def fitness(self):
@@ -86,8 +93,6 @@ class Animal:
                     self.weight -= self._params['xi'] * new_animal.weight
                     return new_animal
 
-
-
 class Herbivore(Animal):
     _params = {'w_birth': 8.,
                'sigma_birth': 1.5,
@@ -128,16 +133,39 @@ class Carnivore(Animal):
     def __init__(self, age=0, weight=None):
         super().__init__(age, weight)
 
+    def hunts(self, herb_sorted_list ):
+        """should return a list of dead animals,
+        empty list is returned otherwise"""
+        dead_herb_list = []
+        eaten_amount = 0
+        # print('initial fitness of carn ', self.fitness())
+        for herb in herb_sorted_list:
+            fit = self.fitness()
+            if fit - herb.fitness() <= 0:
+                break  # This carn is incapable of eating any more herbs in the list
+            elif fit - herb.fitness() < self._params['DeltaPhiMax']:
+                if np.random.random() < (fit -
+                                         herb.fitness())/self._params['DeltaPhiMax']:
+                    # print('fitness of carn before eating one more', self.fitness())
+                    dead_herb_list.append(herb)
+                    eaten = min(self._params['F'] - eaten_amount, herb.weight)
+                    self.weight += self._params['beta'] * eaten
+                    eaten_amount +=  herb.weight
+                    # print('fitness of carn after eating one more', self.fitness())
+            else:
+                dead_herb_list.append(herb)
+                eaten = min(50 - eaten_amount, herb.weight)
+                self.weight += self._params['beta'] * eaten
+                eaten_amount +=  herb.weight
+                print('Does it ever come here??')
+
+            if eaten_amount >= self._params['F']:
+                break
+
+        return dead_herb_list
 
 if __name__ == "__main__":
-    h = Herbivore(weight = 50)
-    print(h.fitness())
-    newborn = h.gives_baby(100)
-    print(newborn)
-    print(newborn.weight)
-    print(newborn.fitness())
+    h = [Herbivore(weight = 50)]
+    print( list( set(h) - set([]) ) )
 
-    newborn = h.gives_baby(100)
-    print(newborn)
-    print(newborn.weight)
-    print(newborn.fitness())
+
