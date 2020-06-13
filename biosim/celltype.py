@@ -83,8 +83,6 @@ class Water(CellType):
     def __init__(self, row, col):
         super().__init__(row, col)
 
-
-
 class Desert(CellType):
     is_migratable = True
     _params = {'fodder': 0}
@@ -105,6 +103,7 @@ class Lowland(CellType):
         super().__init__(row, col)
         self.fodder = self._params['fodder']
 
+
     def grow_fodder_each_year(self):
         self.fodder = self._params['fodder']
 
@@ -119,7 +118,6 @@ class Highland(CellType):
 
     def grow_fodder_each_year(self):
         self.fodder = self._params['fodder']
-
 
 if __name__ == "__main__":
     listof = [{'species': 'Herbivore',

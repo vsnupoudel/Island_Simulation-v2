@@ -9,6 +9,7 @@ listof = [{'species': 'Herbivore','age': 5,'weight': 20} for _ in range(50)]
 listofcarns = [{'species': 'Carnivore','age': 5,'weight': 20} for _ in range(20)]
 #create a Lowland Object
 l = Lowland(1, 1)
+
 # place them in list in l
 l.place_animals_in_list(listof)
 l.place_animals_in_list(listofcarns)
