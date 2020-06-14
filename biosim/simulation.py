@@ -40,6 +40,7 @@ class BioSim:
         # print(self.rgb_map)
         self.add_population(ini_pop)
         self.current_year = 0
+        self.x_axis_limit = 0
 
         # Set up visualization
         self.viz = Visualization()
@@ -60,6 +61,7 @@ class BioSim:
         :param params: Dict with valid parameter specification for landscape
         """
     def simulate(self, num_years, vis_years=1, img_years=None):
+        self.x_axis_limit += num_years
 
         for i in range(num_years):
             self.current_year += 1
@@ -70,16 +72,19 @@ class BioSim:
                     cell.make_animals_eat()
                     # make them reproduce
                     cell.make_animals_reproduce()
+
+
+            # Migration is at Island level
+            Island().call_migration_helper(self.object_matrix)
+
+            for cell in np.asarray(self.object_matrix).flatten():
+                if cell.__class__.__name__ != "Water":
                     # get older and continue the cycle for next year
                     cell.make_animals_age()
                     # make them die
                     cell.make_animals_die()
-            # numbers = 0
-            # for cell in np.asarray(self.object_matrix).flatten():
-            #     numbers +=  len(cell.herb_list) + len(cell.carn_list)
-            # print('Year ',i,':',numbers)
 
-            self.viz.update_plot(self.current_year,
+            self.viz.update_plot(self.x_axis_limit,
                                  anim_distribution_dict= self.animal_distribution_in_cells
                                  , total_anim_dict= self.num_animals_per_species)
             self.viz.update_histogram(fit_list=self.fit_list, age_list= self.age_list,
@@ -129,7 +134,7 @@ class BioSim:
 
     @property
     def animal_distribution_in_cells(self):
-        pass
+
         """        :return: A 2D list of number of animals in each cell.      """
         row_num = np.shape(self.object_matrix)[0]
         column_num = np.shape(self.object_matrix)[1]

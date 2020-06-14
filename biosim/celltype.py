@@ -5,6 +5,7 @@ __author__ = 'bipo@nmbu.no'
 import numpy as np
 from biosim.animal import Herbivore, Carnivore
 
+
 class CellType:
     def __init__(self, row, col):
         self.row = row
@@ -26,13 +27,13 @@ class CellType:
 
     def carns_hunt(self):
         self.herb_list.sort(key=lambda x: x.fitness())
-        self.carn_list.sort(key=lambda x: x.fitness(), reverse= True)
+        self.carn_list.sort(key=lambda x: x.fitness(), reverse=True)
         carns_num_eating = 0
         for anim in self.carn_list:
             dead_herbs = anim.hunts(self.herb_list)
-            if len(dead_herbs) >=1:
-                carns_num_eating +=1
-            self.herb_list = list ( set(self.herb_list) - set(dead_herbs))
+            if len(dead_herbs) >= 1:
+                carns_num_eating += 1
+            self.herb_list = list(set(self.herb_list) - set(dead_herbs))
             self.herb_list.sort(key=lambda x: x.fitness())
 
         # print(carns_num_eating, ' out of ', len(self.carn_list), ' ate this year')
@@ -63,7 +64,7 @@ class CellType:
         for anim in self.herb_list:
             if anim.dies():
                 death_list.append(anim)
-        self.herb_list = list( set(self.herb_list) - set(death_list) )
+        self.herb_list = list(set(self.herb_list) - set(death_list))
 
         carn_death_list = []
         for anim in self.carn_list:
@@ -77,11 +78,39 @@ class CellType:
         for anim in self.carn_list:
             anim.get_older()
 
+    def emigrants_list(self, adjacent_cells):
+        dct = {}
+        listofanim =  [anim for anim in self.carn_list + self.herb_list if anim.migrates() and
+                       anim.has_migrated==False]
+        np.random.shuffle(listofanim)
+        chunks = np.array_split(np.asarray(listofanim), 4)
+        for cell, animlist in zip(adjacent_cells, chunks):
+            aslist = list(animlist)
+            for anim in aslist:
+                anim.has_migrated = True
+            dct[cell] = aslist
+
+
+        # print(dct)
+        return dct
+
+    def add_immigrants(self, listofanim):
+        herbs = [anim for anim in listofanim if anim.__class__.__name__ == 'Herbivore']
+        carns = [anim for anim in listofanim if anim.__class__.__name__ == 'Carnivore']
+        self.herb_list.extend(herbs)
+        self.carn_list.extend(carns)
+
+
+    def remove_emigrants(self, listof):
+        self.herb_list = list( set( self.herb_list) - set(listof) )
+        self.carn_list = list(set(self.carn_list) - set(listof))
+
 class Water(CellType):
     is_migratable = False
 
     def __init__(self, row, col):
         super().__init__(row, col)
+
 
 class Desert(CellType):
     is_migratable = True
@@ -97,12 +126,11 @@ class Desert(CellType):
 
 class Lowland(CellType):
     is_migratable = True
-    _params = {'fodder':800}
+    _params = {'fodder': 800}
 
     def __init__(self, row, col):
         super().__init__(row, col)
         self.fodder = self._params['fodder']
-
 
     def grow_fodder_each_year(self):
         self.fodder = self._params['fodder']
@@ -118,6 +146,7 @@ class Highland(CellType):
 
     def grow_fodder_each_year(self):
         self.fodder = self._params['fodder']
+
 
 if __name__ == "__main__":
     listof = [{'species': 'Herbivore',

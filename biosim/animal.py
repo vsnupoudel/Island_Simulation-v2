@@ -23,6 +23,8 @@ class Animal:
         else:
             self.weight = weight
 
+        self.has_migrated = False
+
     def get_older(self):
         """
         Function is called for each animal at the end of a year cycle.
@@ -92,6 +94,11 @@ class Animal:
                 if self._params['xi'] * new_animal.weight <= self.weight:
                     self.weight -= self._params['xi'] * new_animal.weight
                     return new_animal
+
+    def migrates(self):
+        # return True
+        return np.random.random() < self._params['mu'] * self.fitness()
+
 
 class Herbivore(Animal):
     _params = {'w_birth': 8.,
@@ -165,7 +172,8 @@ class Carnivore(Animal):
         return dead_herb_list
 
 if __name__ == "__main__":
-    h = [Herbivore(weight = 50)]
-    print( list( set(h) - set([]) ) )
+    h = Herbivore(weight = 50)
+    print(h.__class__.__name__)
+    # print( list( set(h) - set([]) ) )
 
 
