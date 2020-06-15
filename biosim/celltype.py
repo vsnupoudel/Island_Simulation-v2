@@ -7,6 +7,11 @@ from biosim.animal import Herbivore, Carnivore
 
 
 class CellType:
+    @classmethod
+    def set_parameters(cls, params):
+        """Set parameters for class."""
+
+        cls._params.update(params)
     def __init__(self, row, col):
         self.row = row
         self.col = col
@@ -78,7 +83,7 @@ class CellType:
         for anim in self.carn_list:
             anim.get_older()
 
-    def emigrants_list(self, adjacent_cells):
+    def emigrants_list(self, adjacent_cells): #takes in adjacent cells
         dct = {}
         listofanim =  [anim for anim in self.carn_list + self.herb_list if anim.migrates() and
                        anim.has_migrated==False]
@@ -90,8 +95,11 @@ class CellType:
                 anim.has_migrated = True
             dct[cell] = aslist
 
+            # { cell1: [], cell2:[], cell2}
+
 
         # print(dct)
+        # { waater : [h], highland, lowland , }
         return dct
 
     def add_immigrants(self, listofanim):
@@ -103,7 +111,7 @@ class CellType:
 
     def remove_emigrants(self, listof):
         self.herb_list = list( set( self.herb_list) - set(listof) )
-        self.carn_list = list(set(self.carn_list) - set(listof))
+        self.carn_list = list( set(self.carn_list) - set(listof) )
 
 class Water(CellType):
     is_migratable = False

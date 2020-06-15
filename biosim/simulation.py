@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from biosim.island import Island
 from biosim.visualization import Visualization
+from biosim.animal import Herbivore, Carnivore
+from biosim.celltype import Lowland, Highland
 
 class BioSim:
     def __init__(self, island_map, ini_pop, seed,
@@ -47,19 +49,18 @@ class BioSim:
         self.viz.set_plots_for_first_time(rgb_map = self.rgb_map)
 
     def set_animal_parameters(self, species, params):
-        pass
-        """
-        Set parameters for animal species.
-        :param species: String, name of animal species
-        :param params: Dict with valid parameter specification for species
-        """
+        if species == "Herbivore":
+            Herbivore.set_parameters(params)
+        elif species == "Carnivore":
+            Carnivore.set_parameters(params)
+
     def set_landscape_parameters(self, landscape, params):
-        pass
-        """
-        Set parameters for landscape type.
-        :param landscape: String, code letter for landscape
-        :param params: Dict with valid parameter specification for landscape
-        """
+        if landscape == "L":
+            Lowland.set_parameters(params)
+        elif landscape == "H":
+            Highland.set_parameters(params)
+
+
     def simulate(self, num_years, vis_years=1, img_years=None):
         self.x_axis_limit += num_years
 
@@ -73,9 +74,9 @@ class BioSim:
                     # make them reproduce
                     cell.make_animals_reproduce()
 
-
             # Migration is at Island level
             Island().call_migration_helper(self.object_matrix)
+
 
             for cell in np.asarray(self.object_matrix).flatten():
                 if cell.__class__.__name__ != "Water":
@@ -169,8 +170,4 @@ class BioSim:
         """Create MPEG4 movie from visualization images saved."""
 
 if __name__ == "__main__":
-    # lol = [[1,2,3], [4,4,4], [9,9,9] ]
-    # print( sum( sum( np.asarray(lol))))
-    plt.plot(range(3),[2,3,4],'-o' )
-    plt.show()
-    # print(sum(np.asarray(lol)) )
+    pass
