@@ -39,7 +39,6 @@ class BioSim:
         """
         self.object_matrix = Island().create_map(island_map)
         self.rgb_map = Island().rgb_for_map(island_map)
-        # print(self.rgb_map)
         self.add_population(ini_pop)
         self.current_year = 0
         self.x_axis_limit = 0
@@ -62,7 +61,6 @@ class BioSim:
 
 
     def simulate(self, num_years, vis_years=1, img_years=None):
-        self.x_axis_limit += num_years
 
         for i in range(num_years):
             self.current_year += 1
@@ -85,8 +83,7 @@ class BioSim:
                     # make them die
                     cell.make_animals_die()
 
-            self.viz.update_plot(self.x_axis_limit,
-                                 anim_distribution_dict= self.animal_distribution_in_cells
+            self.viz.update_plot( anim_distribution_dict= self.animal_distribution_in_cells
                                  , total_anim_dict= self.num_animals_per_species)
             self.viz.update_histogram(fit_list=self.fit_list, age_list= self.age_list,
                                       wt_list= self.weight_list)
@@ -118,20 +115,30 @@ class BioSim:
     @property
     def fit_list(self):
         """Total number of animals on island."""
-        return [ anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for anim in
-                 cell.herb_list+cell.carn_list ]
+        herb_lt = [ anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for
+                      anim in
+                 cell.herb_list ]
+        carn_lt = [anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for anim in
+         cell.carn_list]
+        return {'Herbivore': herb_lt, 'Carnivore':carn_lt}
 
     @property
     def age_list(self):
         """Total number of animals on island."""
-        return [anim.age for cell in np.asarray(self.object_matrix).flatten() for anim in
-                cell.herb_list + cell.carn_list]
+        herb_lt = [anim.age for cell in np.asarray(self.object_matrix).flatten() for anim in
+                cell.herb_list ]
+        carn_lt = [anim.age for cell in np.asarray(self.object_matrix).flatten() for anim in
+                  cell.carn_list]
+        return {'Herbivore': herb_lt, 'Carnivore': carn_lt}
 
     @property
     def weight_list(self):
         """Total number of animals on island."""
-        return [anim.weight for cell in np.asarray(self.object_matrix).flatten() for anim in
-                cell.herb_list + cell.carn_list]
+        herb_lt = [anim.weight for cell in np.asarray(self.object_matrix).flatten() for anim in
+                cell.herb_list ]
+        carn_lt = [anim.weight for cell in np.asarray(self.object_matrix).flatten() for anim in
+                  cell.carn_list]
+        return {'Herbivore': herb_lt, 'Carnivore': carn_lt}
 
     @property
     def animal_distribution_in_cells(self):

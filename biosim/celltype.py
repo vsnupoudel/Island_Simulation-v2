@@ -95,11 +95,6 @@ class CellType:
                 anim.has_migrated = True
             dct[cell] = aslist
 
-            # { cell1: [], cell2:[], cell2}
-
-
-        # print(dct)
-        # { waater : [h], highland, lowland , }
         return dct
 
     def add_immigrants(self, listofanim):
