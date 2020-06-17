@@ -202,3 +202,10 @@ def test_figure_saved(figfile_root):
 
     assert os.path.isfile(figfile_root + '_00000.png')
     assert os.path.isfile(figfile_root + '_00001.png')
+
+
+if __name__ == "__main__":
+    pass
+    # test_inconsistent_length
+    # test_get_num_animals
+    # test_figure_saved

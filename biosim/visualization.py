@@ -27,6 +27,7 @@ class Visualization:
         self.wt_ax = self.fig.add_subplot(6, 3, 18)
         self.wt_ax.title.set_text('Weight Histogram')
 
+
         # # The HeatMaps
         self.herb_heatmap_ax = self.fig.add_axes([0.1,0.28,0.35,0.3])  # llx, lly, w, h
         self.herb_axis = None
@@ -94,7 +95,6 @@ class Visualization:
         x = list(np.arange(length) )
         # self.line_ax.clear()
         self.line_ax.set_ylim(0, max(self.herb_data)+10)
-
         self.line_ax.title.set_text('Herb and Carn Count in map')
         self.line_ax.set_xlabel('Years')
         self.line_ax.set_ylabel('Number of Species')
@@ -122,6 +122,5 @@ class Visualization:
 
 
 if __name__ == "__main__":
-    print(np.arange(1,10))
-    for i in range(1,10):
-        print(i)
+    v = Visualization()
+    v.set_plots_for_first_time()
