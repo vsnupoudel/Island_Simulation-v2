@@ -83,6 +83,30 @@ class CellType:
         for anim in self.carn_list:
             anim.get_older()
 
+    def migration_prepare(self): # to be called once for all cell at the beginning
+        for anim in self.herb_list + self.carn_list:
+            anim.has_migrated = False
+
+    def migration_master(self, object_matrix):
+        if not isinstance(self, Water):
+            adjacent_cells = self.adjacent_cells( object_matrix)
+            dict_of_migrants = self.emigrants_list(adjacent_cells)
+
+            for migrating_cell, values in dict_of_migrants.items():
+                if not isinstance(migrating_cell, Water) and values:
+                    migrating_cell.add_immigrants(values)
+                    self.remove_emigrants(values)
+
+    def adjacent_cells(self, object_matrix):
+        x = self.row
+        y = self.col
+        adjacent_cells = []
+        for i in (-1, 1):
+            adjacent_cells.append(object_matrix[x + i][y])
+            adjacent_cells.append(object_matrix[x][y + i])
+
+        return adjacent_cells
+
     def emigrants_list(self, adjacent_cells): #takes in adjacent cells
         dct = {}
         listofanim =  [anim for anim in self.carn_list + self.herb_list if anim.migrates() and

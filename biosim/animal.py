@@ -7,6 +7,10 @@ import math
 
 
 class Animal:
+    """
+    This is the class level documentation
+    :return None
+    """
     _params = {}
 
     @classmethod
@@ -15,6 +19,12 @@ class Animal:
         cls._params.update(params)
 
     def __init__(self, age=0, weight=None):
+        """
+        This is for the init function
+        :param age:  age
+        :param weight: wt
+        :return
+        """
         self.age = age
         birth_weight = np.random.normal(self._params['w_birth'], self._params['sigma_birth'])
         # print(birth_weight)
@@ -171,9 +181,5 @@ class Carnivore(Animal):
 
         return dead_herb_list
 
-if __name__ == "__main__":
-    h = Herbivore(weight = 50)
-    print(h.__class__.__name__)
-    # print( list( set(h) - set([]) ) )
 
 

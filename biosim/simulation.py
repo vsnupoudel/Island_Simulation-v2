@@ -10,11 +10,18 @@ from biosim.animal import Herbivore, Carnivore
 from biosim.celltype import Lowland, Highland
 
 class BioSim:
+    """
+    This is the class level documentation for Biosim
+    :return None
+    """
     def __init__(self, island_map, ini_pop, seed,
         ymax_animals=None, cmax_animals=None, hist_specs=None,
         img_base=None, img_fmt='png'):
-        """ This documentation should appear in html.
+        """
+        :ivar : island map , is a formatted string
+        This documentation should appear in html.
         This is inside INIT of class BioSim
+        :return  None
         """
 
         self.object_matrix = Island().create_map(island_map)
@@ -69,15 +76,19 @@ class BioSim:
         for i in range(num_years):
             self.current_year += 1
             for cell in np.asarray(self.object_matrix).flatten():
+                cell.migration_prepare()
+            for cell in np.asarray(self.object_matrix).flatten():
                 if cell.__class__.__name__  != "Water":
                     cell.grow_fodder_each_year()
-                    # make them eat
+                    # # make them eat
                     cell.make_animals_eat()
-                    # make them reproduce
+                    # # make them reproduce
                     cell.make_animals_reproduce()
+                    #make them migrate
+                    cell.migration_master(self.object_matrix)
 
             # Migration is at Island level
-            Island().call_migration_helper(self.object_matrix)
+            # Island().call_migration_helper(self.object_matrix)
 
 
             for cell in np.asarray(self.object_matrix).flatten():
@@ -86,6 +97,8 @@ class BioSim:
                     cell.make_animals_age()
                     # make them die
                     cell.make_animals_die()
+
+            # if self.current_year % self.viz_years == 0:
 
             self.viz.update_plot( anim_distribution_dict= self.animal_distribution_in_cells
                                  , total_anim_dict= self.num_animals_per_species)

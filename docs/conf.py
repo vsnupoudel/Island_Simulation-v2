@@ -18,9 +18,9 @@ autoclass_content = 'both'
 
 # -- Project information -----------------------------------------------------
 
-project = 'Ecosystem simulation in Russumøya'
-copyright = '2020, Bishnu Poudel'
-author = 'Bishnu Poudel'
+project = 'Is sim'
+copyright = '2020, Bishnu'
+author = 'Bishnu'
 
 # The full version, including alpha/beta/rc tags
 release = '1'

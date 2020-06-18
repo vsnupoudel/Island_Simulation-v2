@@ -48,30 +48,30 @@ class Island:
 
         return kart_rgb
 
-    def call_migration_helper(self, object_matrix):
-        for cell in np.asarray(object_matrix).flatten():
-            for anim in cell.herb_list + cell.carn_list:
-                anim.has_migrated = False  # should set value with a setter
+    # def call_migration_helper(self, object_matrix):
+    #     for cell in np.asarray(object_matrix).flatten():
+    #         for anim in cell.herb_list + cell.carn_list:
+    #             anim.has_migrated = False  # should set value with a setter
+    #
+    #     for cell in np.asarray(object_matrix).flatten():
+    #         if cell.__class__.__name__ != 'Water':
+    #             adjacent_cells = self.adjacent_cells(cell, object_matrix)
+    #             dict_of_migrants = cell.emigrants_list(adjacent_cells)
+    #
+    #             for migrating_cell, values in dict_of_migrants.items():
+    #                 if migrating_cell.__class__.__name__ != 'Water' and values:
+    #                     migrating_cell.add_immigrants(values)
+    #                     cell.remove_emigrants(values)
 
-        for cell in np.asarray(object_matrix).flatten():
-            if cell.__class__.__name__ != 'Water':
-                adjacent_cells = self.adjacent_cells(cell, object_matrix)
-                dict_of_migrants = cell.emigrants_list(adjacent_cells)
-
-                for migrating_cell, values in dict_of_migrants.items():
-                    if migrating_cell.__class__.__name__ != 'Water' and values:
-                        migrating_cell.add_immigrants(values)
-                        cell.remove_emigrants(values)
-
-    @staticmethod
-    def adjacent_cells(cell, object_matrix):
-        x = cell.row;
-        y = cell.col
-        adjacent_cells = []
-        for i in (-1, 1):
-            adjacent_cells.append(object_matrix[x + i][y])
-            adjacent_cells.append(object_matrix[x][y + i])
-        return adjacent_cells
+    # @staticmethod
+    # def adjacent_cells(cell, object_matrix):
+    #     x = cell.row;
+    #     y = cell.col
+    #     adjacent_cells = []
+    #     for i in (-1, 1):
+    #         adjacent_cells.append(object_matrix[x + i][y])
+    #         adjacent_cells.append(object_matrix[x][y + i])
+    #     return adjacent_cells
 
 
 if __name__ == "__main__":
