@@ -66,4 +66,5 @@ if __name__ == '__main__':
     sim.simulate(num_years=50, vis_years=10, img_years=2000)
 
     plt.savefig('check_sim.pdf')
+
     # input('Press ENTER')
