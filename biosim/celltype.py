@@ -25,9 +25,17 @@ class CellType:
     def herb_list(self):
         return self._herb_list
 
+    @herb_list.setter
+    def herb_list(self, new_herbs):
+        self._herb_list = new_herbs
+
     @property
     def carn_list(self):
         return self._carn_list
+
+    @carn_list.setter
+    def carn_list(self, new_carns):
+        self._carn_list = new_carns
 
     def place_animals_in_list(self, list_of_diction):
         for animal in list_of_diction:
