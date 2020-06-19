@@ -7,41 +7,52 @@ from biosim.animal import Herbivore, Carnivore
 
 
 class CellType:
+    _params = {'fodder': 0}
+
     @classmethod
     def set_parameters(cls, params):
         """Set parameters for class."""
-
         cls._params.update(params)
+
     def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.herb_list = []
-        self.carn_list = []
+        self._herb_list = []
+        self._carn_list = []
+        self.fodder = self._params['fodder']
+
+    @property
+    def herb_list(self):
+        return self._herb_list
+
+    @property
+    def carn_list(self):
+        return self._carn_list
 
     def place_animals_in_list(self, list_of_diction):
         for animal in list_of_diction:
             if animal['species'] == "Herbivore":
-                self.herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
+                self._herb_list.append(Herbivore(age=animal['age'], weight=animal['weight']))
             if animal['species'] == "Carnivore":
-                self.carn_list.append(Carnivore(age=animal['age'], weight=animal['weight']))
+                self._carn_list.append(Carnivore(age=animal['age'], weight=animal['weight']))
 
     def herbs_eat(self):
-        np.random.shuffle(self.herb_list)
-        for herb in self.herb_list:
+        np.random.shuffle(self._herb_list)
+        for herb in self._herb_list:
             self.fodder -= herb.eat(self.fodder)
 
     def carns_hunt(self):
-        self.herb_list.sort(key=lambda x: x.fitness())
-        self.carn_list.sort(key=lambda x: x.fitness(), reverse=True)
+        self._herb_list.sort(key=lambda x: x.fitness())
+        self._carn_list.sort(key=lambda x: x.fitness(), reverse=True)
         carns_num_eating = 0
-        for anim in self.carn_list:
-            dead_herbs = anim.hunts(self.herb_list)
+        for anim in self._carn_list:
+            dead_herbs = anim.hunts(self._herb_list)
             if len(dead_herbs) >= 1:
                 carns_num_eating += 1
-            self.herb_list = list(set(self.herb_list) - set(dead_herbs))
-            self.herb_list.sort(key=lambda x: x.fitness())
+            self._herb_list = list(set(self._herb_list) - set(dead_herbs))
+            self._herb_list.sort(key=lambda x: x.fitness())
 
-        # print(carns_num_eating, ' out of ', len(self.carn_list), ' ate this year')
+        # print(carns_num_eating, ' out of ', len(self._carn_list), ' ate this year')
 
     def make_animals_eat(self):
         self.herbs_eat()
@@ -49,42 +60,42 @@ class CellType:
 
     def make_animals_reproduce(self):
         newborn_list = []
-        len_list = len(self.herb_list)
-        for anim in self.herb_list:
+        len_list = len(self._herb_list)
+        for anim in self._herb_list:
             new_born = anim.gives_baby(len_list)
             if new_born is not None:
                 newborn_list.append(new_born)
-        self.herb_list = self.herb_list + newborn_list
+        self._herb_list = self._herb_list + newborn_list
 
         newcarn_list = []
-        len_list = len(self.carn_list)
-        for anim in self.carn_list:
+        len_list = len(self._carn_list)
+        for anim in self._carn_list:
             new_born = anim.gives_baby(len_list)
             if new_born is not None:
                 newcarn_list.append(new_born)
-        self.carn_list = self.carn_list + newcarn_list
+        self._carn_list = self._carn_list + newcarn_list
 
     def make_animals_die(self):
         death_list = []
-        for anim in self.herb_list:
+        for anim in self._herb_list:
             if anim.dies():
                 death_list.append(anim)
-        self.herb_list = list(set(self.herb_list) - set(death_list))
+        self._herb_list = list(set(self._herb_list) - set(death_list))
 
         carn_death_list = []
-        for anim in self.carn_list:
+        for anim in self._carn_list:
             if anim.dies():
                 carn_death_list.append(anim)
-        self.carn_list = list(set(self.carn_list) - set(carn_death_list))
+        self._carn_list = list(set(self._carn_list) - set(carn_death_list))
 
     def make_animals_age(self):
-        for anim in self.herb_list:
+        for anim in self._herb_list:
             anim.get_older()
-        for anim in self.carn_list:
+        for anim in self._carn_list:
             anim.get_older()
 
-    def migration_prepare(self): # to be called once for all cell at the beginning
-        for anim in self.herb_list + self.carn_list:
+    def migration_prepare_cell(self): # to be called once for all cell at the beginning
+        for anim in self._herb_list + self._carn_list:
             anim.has_migrated = False
 
     def migration_master(self, object_matrix):
@@ -109,8 +120,8 @@ class CellType:
 
     def emigrants_list(self, adjacent_cells): #takes in adjacent cells
         dct = {}
-        listofanim =  [anim for anim in self.carn_list + self.herb_list if anim.migrates() and
-                       anim.has_migrated==False]
+        listofanim =  [anim for anim in self._carn_list + self._herb_list if anim.migrates() and
+                       anim.has_migrated == False]
         np.random.shuffle(listofanim)
         chunks = np.array_split(np.asarray(listofanim), 4)
         for cell, animlist in zip(adjacent_cells, chunks):
@@ -124,16 +135,17 @@ class CellType:
     def add_immigrants(self, listofanim):
         herbs = [anim for anim in listofanim if anim.__class__.__name__ == 'Herbivore']
         carns = [anim for anim in listofanim if anim.__class__.__name__ == 'Carnivore']
-        self.herb_list.extend(herbs)
-        self.carn_list.extend(carns)
+        self._herb_list.extend(herbs)
+        self._carn_list.extend(carns)
 
 
     def remove_emigrants(self, listof):
-        self.herb_list = list( set( self.herb_list) - set(listof) )
-        self.carn_list = list( set(self.carn_list) - set(listof) )
+        self._herb_list = list(set(self._herb_list) - set(listof))
+        self._carn_list = list(set(self._carn_list) - set(listof))
 
 class Water(CellType):
     is_migratable = False
+    _params = {'fodder': 0}
 
     def __init__(self, row, col):
         super().__init__(row, col)
@@ -186,20 +198,20 @@ if __name__ == "__main__":
     l.place_animals_in_list(listof)
     # make them eat
     l.make_animals_eat()
-    # for herb in l.herb_list:
+    # for herb in l._herb_list:
     #     print(herb.fitness(), end=',')
 
     # make them reproduce
     print("")
-    print(len(l.herb_list))
+    print(len(l._herb_list))
     l.make_animals_reproduce()
-    print(len(l.herb_list))
+    print(len(l._herb_list))
 
     # make them die
     l.make_animals_die()
-    print(len(l.herb_list))
+    print(len(l._herb_list))
 
     # get older and continue the cycle for next year
     l.make_animals_age()
-    for anim in l.herb_list:
+    for anim in l._herb_list:
         print(anim.age, end=',')

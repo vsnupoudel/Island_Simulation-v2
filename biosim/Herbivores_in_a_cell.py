@@ -16,14 +16,14 @@ l.place_animals_in_list(listofcarns)
 
 # Making figure
 # fig = plt.figure(figsize=(8, 6.4))
-# plt.plot(0, len(l.herb_list),  '*-', color='g', lw=0.5)
-# plt.plot(0, len(l.carn_list),  '*-', color='r', lw=0.5)
+# plt.plot(0, len(l._herb_list),  '*-', color='g', lw=0.5)
+# plt.plot(0, len(l._carn_list),  '*-', color='r', lw=0.5)
 # plt.draw()
 # plt.pause(0.001)
 
 # count list
-count_herb = [len(l.herb_list)]
-count_carn = [len(l.carn_list)]
+count_herb = [len(l._herb_list)]
+count_carn = [len(l._carn_list)]
 # for i in range(10):
 #     # np.random.seed(i)
 for i in range(200):
@@ -38,19 +38,19 @@ for i in range(200):
     # make them die
     l.make_animals_die()
 
-    count_herb.append(len(l.herb_list))
-    count_carn.append(len(l.carn_list))
+    count_herb.append(len(l._herb_list))
+    count_carn.append(len(l._carn_list))
     # plotting
     # plt.plot( list(range(i + 2)),  count_herb, '*-', color='g', lw=0.5)
     # plt.plot(list(range(i + 2)), count_carn, '*-', color='r', lw=0.5)
     # plt.draw()
     # plt.pause(0.001)
 
-    #     print(i, " Year End Herb numbers :-", len(l.herb_list))
-    #     print(i, " Year End Carn numbers :-", len(l.carn_list))
+    #     print(i, " Year End Herb numbers :-", len(l._herb_list))
+    #     print(i, " Year End Carn numbers :-", len(l._carn_list))
     #
-    # print( i, " Year End Herb numbers :-", len(l.herb_list))
-    # print(i, " Year End Carn numbers :-", len(l.carn_list))
+    # print( i, " Year End Herb numbers :-", len(l._herb_list))
+    # print(i, " Year End Carn numbers :-", len(l._carn_list))
 
     # print('average, std herbivores , min:', np.mean(count_herb),  np.std(count_herb) ,
     #       np.min(count_herb))

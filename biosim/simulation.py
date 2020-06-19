@@ -4,10 +4,13 @@ __author__ = 'bipo@nmbu.no'
 
 import numpy as np
 import matplotlib.pyplot as plt
+# import itertools
 from biosim.island import Island
 from biosim.visualization import Visualization
 from biosim.animal import Herbivore, Carnivore
 from biosim.celltype import Lowland, Highland
+
+# from
 
 class BioSim:
     """
@@ -75,9 +78,11 @@ class BioSim:
 
         for i in range(num_years):
             self.current_year += 1
+            self.prepare_migration()
+
+
             for cell in np.asarray(self.object_matrix).flatten():
-                cell.migration_prepare()
-            for cell in np.asarray(self.object_matrix).flatten():
+            # for cell in itertools.chain(*self.object_matrix):
                 if cell.__class__.__name__  != "Water":
                     cell.grow_fodder_each_year()
                     # # make them eat
@@ -92,18 +97,20 @@ class BioSim:
 
 
             for cell in np.asarray(self.object_matrix).flatten():
+            # for cell in itertools.chain(*self.object_matrix):
                 if cell.__class__.__name__ != "Water":
                     # get older and continue the cycle for next year
                     cell.make_animals_age()
                     # make them die
                     cell.make_animals_die()
 
-            # if self.current_year % self.viz_years == 0:
-
+            # if self.current_year % vis_years == 0:
             self.viz.update_plot( anim_distribution_dict= self.animal_distribution_in_cells
                                  , total_anim_dict= self.num_animals_per_species)
             self.viz.update_histogram(fit_list=self.fit_list, age_list= self.age_list,
                                       wt_list= self.weight_list)
+
+            # print('Year :',self.current_year, '  ',self.num_animals_per_species)
 
 
         """
@@ -113,6 +120,12 @@ class BioSim:
         :param img_years: years between visualizations saved to files (default: vis_years)
         Image files will be numbered consecutively.
         """
+    def prepare_migration(self):
+
+        for cell in np.asarray(self.object_matrix).flatten():
+        # for cell in itertools.chain(*self.object_matrix):
+            cell.migration_prepare_cell()
+
 
     def add_population(self, population):
         """
@@ -132,9 +145,8 @@ class BioSim:
     @property
     def fit_list(self):
         """Total number of animals on island."""
-        herb_lt = [ anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for
-                      anim in
-                 cell.herb_list ]
+        herb_lt = [anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for
+                   anim in cell._herb_list]
         carn_lt = [anim.fitness() for cell in np.asarray(self.object_matrix).flatten() for anim in
          cell.carn_list]
         return {'Herbivore': herb_lt, 'Carnivore':carn_lt}
@@ -143,7 +155,7 @@ class BioSim:
     def age_list(self):
         """Total number of animals on island."""
         herb_lt = [anim.age for cell in np.asarray(self.object_matrix).flatten() for anim in
-                cell.herb_list ]
+                   cell._herb_list]
         carn_lt = [anim.age for cell in np.asarray(self.object_matrix).flatten() for anim in
                   cell.carn_list]
         return {'Herbivore': herb_lt, 'Carnivore': carn_lt}
@@ -152,7 +164,7 @@ class BioSim:
     def weight_list(self):
         """Total number of animals on island."""
         herb_lt = [anim.weight for cell in np.asarray(self.object_matrix).flatten() for anim in
-                cell.herb_list ]
+                   cell._herb_list]
         carn_lt = [anim.weight for cell in np.asarray(self.object_matrix).flatten() for anim in
                   cell.carn_list]
         return {'Herbivore': herb_lt, 'Carnivore': carn_lt}
@@ -168,8 +180,8 @@ class BioSim:
         c_matrix = np.zeros((row_num, column_num))
 
         for cell in np.asarray(self.object_matrix).flatten():
-            # print(cell.herb_list)
-            h_matrix[cell.row][cell.col] = len(cell.herb_list)
+            # print(cell._herb_list)
+            h_matrix[cell.row][cell.col] = len(cell._herb_list)
             c_matrix[cell.row][cell.col] = len(cell.carn_list)
 
         animal_distribution_dict = {"Herbivore": h_matrix, "Carnivore": c_matrix}

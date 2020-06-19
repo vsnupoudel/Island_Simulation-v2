@@ -59,7 +59,7 @@ class Visualization:
                                                 , fontdict= { 'weight': 'bold', 'size': 16 })
         plt.pause(1e-6)
 
-    def update_plot(self, anim_distribution_dict=None, total_anim_dict= None):
+    def update_plot(self, anim_distribution_dict=None, total_anim_dict= None, vis_years=1):
         self.steps += 1
         # Changing the Year in the text
         self.changing_text.set_text( "Year: "+str(self.steps))
@@ -91,7 +91,7 @@ class Visualization:
         # Updating the line graphs
         self.herb_data.append(total_anim_dict['Herbivore'])
         self.carn_data.append(total_anim_dict['Carnivore'])
-        length = len( self.carn_data)
+        length = len( self.herb_data)
         x = list(np.arange(length) )
         # self.line_ax.clear()
         self.line_ax.set_ylim(0, max(self.herb_data)+10)
@@ -99,8 +99,8 @@ class Visualization:
         self.line_ax.set_xlabel('Years')
         self.line_ax.set_ylabel('Number of Species')
 
-        self.line_ax.plot( x, self.herb_data, '-', color= 'g' ,linewidth=0.5 )
-        self.line_ax.plot( x, self.carn_data, '-', color = 'r', linewidth=0.5)
+        self.line_ax.plot( x, self.herb_data, '-*', color= 'g' ,linewidth=0.5 )
+        self.line_ax.plot( x, self.carn_data, '-*', color = 'r', linewidth=0.5)
 
         plt.pause(1e-6)
 

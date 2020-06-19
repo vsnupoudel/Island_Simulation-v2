@@ -50,7 +50,7 @@ class Island:
 
     # def call_migration_helper(self, object_matrix):
     #     for cell in np.asarray(object_matrix).flatten():
-    #         for anim in cell.herb_list + cell.carn_list:
+    #         for anim in cell._herb_list + cell._carn_list:
     #             anim.has_migrated = False  # should set value with a setter
     #
     #     for cell in np.asarray(object_matrix).flatten():
