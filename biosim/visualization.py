@@ -120,6 +120,8 @@ class Visualization:
         self.wt_ax.hist(wt_list['Herbivore'], bins=10, histtype='step')
         self.wt_ax.hist(wt_list['Carnivore'], bins=10, histtype='step')
 
+        plt.pause(1e-6)
+
 
 if __name__ == "__main__":
     v = Visualization()

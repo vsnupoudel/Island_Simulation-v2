@@ -10,7 +10,7 @@ from biosim.visualization import Visualization
 from biosim.animal import Herbivore, Carnivore
 from biosim.celltype import Lowland, Highland
 
-# from
+from multiprocessing import Pool
 
 class BioSim:
     """
@@ -78,7 +78,8 @@ class BioSim:
 
         for i in range(num_years):
             self.current_year += 1
-            self.prepare_migration()
+            pool = Pool(8)
+            pool.map( self.prepare_migration, np.asarray(self.object_matrix).flatten())
 
 
             for cell in np.asarray(self.object_matrix).flatten():
@@ -120,11 +121,14 @@ class BioSim:
         :param img_years: years between visualizations saved to files (default: vis_years)
         Image files will be numbered consecutively.
         """
-    def prepare_migration(self):
+    @staticmethod
+    def prepare_migration(cell):
+        # for cell in np.asarray(self.object_matrix).flatten():
+        cell.migration_prepare_cell()
 
-        for cell in np.asarray(self.object_matrix).flatten():
-        # for cell in itertools.chain(*self.object_matrix):
-            cell.migration_prepare_cell()
+    @staticmethod
+    def pool_grow_fodder_each_year(cell):
+        cell.grow_fodder_each_year()
 
 
     def add_population(self, population):
