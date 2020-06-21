@@ -57,7 +57,7 @@ class Visualization:
         self.year_txt.axis('off')
         self.changing_text = self.year_txt.text(0.2, 0.5, "Year: "+str(0)
                                                 , fontdict= { 'weight': 'bold', 'size': 16 })
-        plt.pause(1e-6)
+        # plt.pause(1)
 
     def update_plot(self, anim_distribution_dict=None, total_anim_dict= None, vis_years=1):
         self.steps += 1
@@ -120,7 +120,7 @@ class Visualization:
         self.wt_ax.hist(wt_list['Herbivore'], bins=10, histtype='step')
         self.wt_ax.hist(wt_list['Carnivore'], bins=10, histtype='step')
 
-        plt.pause(1e-6)
+        # plt.pause(1e-3)
 
 
 if __name__ == "__main__":

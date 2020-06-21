@@ -33,7 +33,15 @@ class Animal:
         else:
             self.weight = weight
 
-        self.has_migrated = False
+        self._has_migrated = False
+
+    @property
+    def has_migrated(self):
+        return self._has_migrated
+
+    @has_migrated.setter
+    def has_migrated(self, bool):
+        self._has_migrated = bool
 
     def get_older(self):
         """

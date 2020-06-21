@@ -103,6 +103,7 @@ class CellType:
             anim.get_older()
 
     def migration_prepare_cell(self): # to be called once for all cell at the beginning
+        # print('Getting called under Pool?')
         for anim in self._herb_list + self._carn_list:
             anim.has_migrated = False
 
@@ -151,6 +152,12 @@ class CellType:
         self._herb_list = list(set(self._herb_list) - set(listof))
         self._carn_list = list(set(self._carn_list) - set(listof))
 
+    def grow_fodder_each_year(self):
+        print('Calls food grower in cell')
+        print(' Last years fodder for this cell', self.fodder)
+        self.fodder = self._params['fodder']
+        print(' This years fodder for this cell', self.fodder)
+
 class Water(CellType):
     is_migratable = False
     _params = {'fodder': 0}
@@ -167,9 +174,6 @@ class Desert(CellType):
         super().__init__(row, col)
         self.fodder = self._params['fodder']
 
-    def grow_fodder_each_year(self):
-        self.fodder = self._params['fodder']
-
 
 class Lowland(CellType):
     is_migratable = True
@@ -182,7 +186,6 @@ class Lowland(CellType):
     def grow_fodder_each_year(self):
         self.fodder = self._params['fodder']
 
-
 class Highland(CellType):
     is_migratable = True
     _params = {'fodder': 300}
@@ -191,35 +194,9 @@ class Highland(CellType):
         super().__init__(row, col)
         self.fodder = self._params['fodder']
 
-    def grow_fodder_each_year(self):
-        self.fodder = self._params['fodder']
-
-
 if __name__ == "__main__":
     listof = [{'species': 'Herbivore',
                'age': 5,
                'weight': 25}
               for _ in range(150)]
-    l = Lowland(1, 1)
-    print(l.fodder)
-    # place them in list
-    l.place_animals_in_list(listof)
-    # make them eat
-    l.make_animals_eat()
-    # for herb in l._herb_list:
-    #     print(herb.fitness(), end=',')
 
-    # make them reproduce
-    print("")
-    print(len(l._herb_list))
-    l.make_animals_reproduce()
-    print(len(l._herb_list))
-
-    # make them die
-    l.make_animals_die()
-    print(len(l._herb_list))
-
-    # get older and continue the cycle for next year
-    l.make_animals_age()
-    for anim in l._herb_list:
-        print(anim.age, end=',')

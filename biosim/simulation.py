@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from biosim.island import Island
 from biosim.visualization import Visualization
 from biosim.animal import Herbivore, Carnivore
-from biosim.celltype import Lowland, Highland
+from biosim.celltype import Lowland, Highland, Water, Desert
 
 from multiprocessing import Pool
 
@@ -78,27 +78,28 @@ class BioSim:
 
         for i in range(num_years):
             self.current_year += 1
-            pool = Pool(8)
-            pool.map( self.prepare_migration, np.asarray(self.object_matrix).flatten())
+            self.prepare_migration()
 
+            # l =  len( np.asarray( self.object_matrix).flatten())
+            # # print(l)
+            # num_of_ = 3
+            # pool = Pool(num_of_)
+            # pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
+            #         self.object_matrix).flatten()), 91)
+            # pool.close()
+            # pool.join()
 
             for cell in np.asarray(self.object_matrix).flatten():
-            # for cell in itertools.chain(*self.object_matrix):
                 if cell.__class__.__name__  != "Water":
                     cell.grow_fodder_each_year()
-                    # # make them eat
+                    # make them eat
                     cell.make_animals_eat()
-                    # # make them reproduce
+                    # make them reproduce
                     cell.make_animals_reproduce()
                     #make them migrate
                     cell.migration_master(self.object_matrix)
 
-            # Migration is at Island level
-            # Island().call_migration_helper(self.object_matrix)
-
-
             for cell in np.asarray(self.object_matrix).flatten():
-            # for cell in itertools.chain(*self.object_matrix):
                 if cell.__class__.__name__ != "Water":
                     # get older and continue the cycle for next year
                     cell.make_animals_age()
@@ -121,14 +122,43 @@ class BioSim:
         :param img_years: years between visualizations saved to files (default: vis_years)
         Image files will be numbered consecutively.
         """
-    @staticmethod
-    def prepare_migration(cell):
-        # for cell in np.asarray(self.object_matrix).flatten():
-        cell.migration_prepare_cell()
+    # @staticmethod
+    # def prepare_migration(self, cell):
+    #     cell.migration_prepare_cell()
+
+    def prepare_migration(self):
+        for cell in np.asarray(self.object_matrix).flatten():
+            cell.migration_prepare_cell()
+
+    # @staticmethod
+    def pool_grow_fodder_each_year(self, cell):
+        # print('Called food grower by pool in simulation')
+        if not isinstance(cell, Water) and not isinstance(cell, Desert):
+            cell.grow_fodder_each_year()
 
     @staticmethod
-    def pool_grow_fodder_each_year(cell):
-        cell.grow_fodder_each_year()
+    def pool_make_animals_eat(cell):
+        if cell.__class__.__name__ != "Water":
+            cell.make_animals_eat()
+
+    @staticmethod
+    def pool_make_animals_reproduce(cell):
+        if cell.__class__.__name__ != "Water":
+            cell.make_animals_reproduce()
+
+    # @staticmethod
+    # def pool_migration_master(cell):
+    #     cell.migration_master(self.object_matrix)
+
+    @staticmethod
+    def pool_make_animals_age(cell):
+        if cell.__class__.__name__ != "Water":
+            cell.make_animals_age()
+
+    @staticmethod
+    def pool_make_animals_die(cell):
+        if cell.__class__.__name__ != "Water":
+            cell.make_animals_die()
 
 
     def add_population(self, population):
