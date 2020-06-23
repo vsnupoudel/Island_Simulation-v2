@@ -34,8 +34,8 @@ class BioSim:
         self.x_axis_limit = 0
 
         # Set up visualization
-        self.viz = Visualization()
-        self.viz.set_plots_for_first_time(rgb_map = self.rgb_map)
+        # self.viz = Visualization()
+        # self.viz.set_plots_for_first_time(rgb_map = self.rgb_map)
 
 
 
@@ -77,25 +77,23 @@ class BioSim:
                 """
 
         for i in range(num_years):
+            print(self.num_animals_per_species)
             self.current_year += 1
             self.prepare_migration()
 
-            l =  len( np.asarray( self.object_matrix).flatten())
-            # print(l)
-            num_of_ = 3
-            pool = Pool(num_of_)
-            pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
-                    self.object_matrix).flatten()), 91)
-            print('Year b4 close :', self.current_year, ' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-            pool.close()
-            print('Year b4 join :', self.current_year, ' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-            pool.join()
-
-            print('Year outside :',self.current_year ,' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-
+            # Trying process for just grow fodder
+            cells_as_array =  np.asarray(self.object_matrix).flatten()
+            l = len(cells_as_array)
+            chunks = np.array_split( cells_as_array , np.ceil(l/4) )
+            for list in chunks:
+                procs = []
+                for cell in list:
+                    proc = Process(target = self.pool_grow_fodder_each_year, args=(cell,))
+                    procs.append(proc)
+                    proc.start()
+            # complete the processes
+                for proc in procs:
+                    proc.join()
 
 
             for cell in np.asarray(self.object_matrix).flatten():
@@ -116,10 +114,10 @@ class BioSim:
                     cell.make_animals_die()
 
             # if self.current_year % vis_years == 0:
-            self.viz.update_plot( anim_distribution_dict= self.animal_distribution_in_cells
-                                 , total_anim_dict= self.num_animals_per_species)
-            self.viz.update_histogram(fit_list=self.fit_list, age_list= self.age_list,
-                                      wt_list= self.weight_list)
+            # self.viz.update_plot( anim_distribution_dict= self.animal_distribution_in_cells
+            #                      , total_anim_dict= self.num_animals_per_species)
+            # self.viz.update_histogram(fit_list=self.fit_list, age_list= self.age_list,
+            #                           wt_list= self.weight_list)
 
             # print('Year :',self.current_year, '  ',self.num_animals_per_species)
 

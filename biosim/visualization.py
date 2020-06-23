@@ -57,7 +57,7 @@ class Visualization:
         self.year_txt.axis('off')
         self.changing_text = self.year_txt.text(0.2, 0.5, "Year: "+str(0)
                                                 , fontdict= { 'weight': 'bold', 'size': 16 })
-        # plt.pause(1)
+        plt.pause(1)
 
     def update_plot(self, anim_distribution_dict=None, total_anim_dict= None, vis_years=1):
         self.steps += 1
@@ -102,7 +102,7 @@ class Visualization:
         self.line_ax.plot( x, self.herb_data, '-*', color= 'g' ,linewidth=0.5 )
         self.line_ax.plot( x, self.carn_data, '-*', color = 'r', linewidth=0.5)
 
-        plt.pause(1e-6)
+        plt.pause(1)
 
     def update_histogram(self, fit_list=None, age_list= None, wt_list= None):
         self.fit_ax.clear()
