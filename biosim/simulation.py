@@ -79,28 +79,18 @@ class BioSim:
         for i in range(num_years):
             self.current_year += 1
             self.prepare_migration()
-
-            l =  len( np.asarray( self.object_matrix).flatten())
-            # print(l)
-            num_of_ = 3
-            pool = Pool(num_of_)
-            pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
-                    self.object_matrix).flatten()), 91)
-            print('Year b4 close :', self.current_year, ' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-            pool.close()
-            print('Year b4 join :', self.current_year, ' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-            pool.join()
-
-            print('Year outside :',self.current_year ,' :', self.object_matrix[10][
-                10].__class__.__name__, self.object_matrix[10][10].fodder)
-
-
+            # l =  len( np.asarray( self.object_matrix).flatten())
+            # # print(l)
+            # num_of_ = 3
+            # pool = Pool(num_of_)
+            # pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
+            #         self.object_matrix).flatten()), 91)
+            # pool.close()
+            # pool.join()
 
             for cell in np.asarray(self.object_matrix).flatten():
                 if cell.__class__.__name__  != "Water":
-                    # cell.grow_fodder_each_year()
+                    cell.grow_fodder_each_year()
                     # make them eat
                     cell.make_animals_eat()
                     # make them reproduce
@@ -122,18 +112,6 @@ class BioSim:
                                       wt_list= self.weight_list)
 
             # print('Year :',self.current_year, '  ',self.num_animals_per_species)
-
-
-        """
-        Run simulation while visualizing the result.
-        :param num_years: number of years to simulate
-        :param vis_years: years between visualization updates
-        :param img_years: years between visualizations saved to files (default: vis_years)
-        Image files will be numbered consecutively.
-        """
-    # @staticmethod
-    # def prepare_migration(self, cell):
-    #     cell.migration_prepare_cell()
 
     def prepare_migration(self):
         for cell in np.asarray(self.object_matrix).flatten():
@@ -248,5 +226,4 @@ class BioSim:
         pass
         """Create MPEG4 movie from visualization images saved."""
 
-if __name__ == "__main__":
-    pass
+

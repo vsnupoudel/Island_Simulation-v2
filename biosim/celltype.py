@@ -153,10 +153,7 @@ class CellType:
         self._carn_list = list(set(self._carn_list) - set(listof))
 
     def grow_fodder_each_year(self):
-        print('Calls food grower in cell')
-        # print(' Last years fodder for this cell', self.fodder)
         self.fodder = self._params['fodder']
-        # print(' This years fodder for this cell', self.fodder)
 
 class Water(CellType):
     is_migratable = False
@@ -182,10 +179,6 @@ class Lowland(CellType):
     def __init__(self, row, col):
         super().__init__(row, col)
         self.fodder = self._params['fodder']
-
-    def grow_fodder_each_year(self):
-        print( "self._params['fodder'] ", self._params['fodder'] )
-        self.fodder = 900 #self._params['fodder']
 
 class Highland(CellType):
     is_migratable = True
