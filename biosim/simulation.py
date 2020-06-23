@@ -10,7 +10,7 @@ from biosim.visualization import Visualization
 from biosim.animal import Herbivore, Carnivore
 from biosim.celltype import Lowland, Highland, Water, Desert
 
-from multiprocessing import Pool
+from multiprocessing import Pool, Process
 
 class BioSim:
     """
@@ -80,18 +80,27 @@ class BioSim:
             self.current_year += 1
             self.prepare_migration()
 
-            # l =  len( np.asarray( self.object_matrix).flatten())
-            # # print(l)
-            # num_of_ = 3
-            # pool = Pool(num_of_)
-            # pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
-            #         self.object_matrix).flatten()), 91)
-            # pool.close()
-            # pool.join()
+            l =  len( np.asarray( self.object_matrix).flatten())
+            # print(l)
+            num_of_ = 3
+            pool = Pool(num_of_)
+            pool.imap(self.pool_grow_fodder_each_year, list(np.asarray(
+                    self.object_matrix).flatten()), 91)
+            print('Year b4 close :', self.current_year, ' :', self.object_matrix[10][
+                10].__class__.__name__, self.object_matrix[10][10].fodder)
+            pool.close()
+            print('Year b4 join :', self.current_year, ' :', self.object_matrix[10][
+                10].__class__.__name__, self.object_matrix[10][10].fodder)
+            pool.join()
+
+            print('Year outside :',self.current_year ,' :', self.object_matrix[10][
+                10].__class__.__name__, self.object_matrix[10][10].fodder)
+
+
 
             for cell in np.asarray(self.object_matrix).flatten():
                 if cell.__class__.__name__  != "Water":
-                    cell.grow_fodder_each_year()
+                    # cell.grow_fodder_each_year()
                     # make them eat
                     cell.make_animals_eat()
                     # make them reproduce
